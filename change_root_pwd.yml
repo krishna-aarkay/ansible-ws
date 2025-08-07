@@ -1,0 +1,11 @@
+---
+- name: Change root password on Linux systems
+  hosts: ntall
+  vars:
+    new_root_password: "{{ '3tcpa1v1D#ep' | password_hash('sha512') }}"
+
+  tasks:
+    - name: Set root password
+      user:
+        name: root
+        password: "{{ new_root_password }}"

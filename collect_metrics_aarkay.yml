@@ -1,0 +1,19 @@
+
+- name: Collect CPU and Memory Usage
+  hosts: ntall
+  gather_facts: no
+  tasks:
+    - name: Get CPU and Memory usage
+      shell: |
+        CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print 100-$8}')
+        MEM=$(free | grep Mem | awk '{print ($2-$4)/$2 * 100.0}')
+        echo "$CPU / $MEM"
+      register: usage
+      ignore_errors: yes
+
+    - name: Save usage to local file
+      local_action:
+        module: copy
+        content: "{{ usage.stdout | default('N/A') }}"
+        dest: "/home/ramkella/ansible-ws/daily_reports/{{ inventory_hostname }}.log"
+
